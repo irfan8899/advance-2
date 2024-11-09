@@ -25,7 +25,7 @@ const videoData = [
   },
   {
     title: "Investing 101",
-    description: "Panduan dasar investasi untuk pemula.",
+    description: "Panduan dasar investasi untuk pemula dan para senior yang sudah berpengalaman.",
     instructorName: "Michael Lee",
     instructorTitle: "Investment Banker di BCA",
     profileImg: "/videocard3.png",
@@ -64,42 +64,40 @@ const videoData = [
     imgSrc: "/videocard6.png",
   },
   {
-    title: "Wealth Management",
-    description: "Strategi pengelolaan kekayaan untuk masa depan.",
-    instructorName: "David Kim",
-    instructorTitle: "Wealth Manager di Bank Mandiri",
-    profileImg: "/videocard6.png",
-    rating: 4.9,
-    price: "Rp 400K",
+    title: "Corporate Finance Fundamentals",
+    description: "Pelajari dasar-dasar keuangan korporasi untuk meningkatkan pemahaman bisnis Anda.",
+    instructorName: "Jane Doe",
+    instructorTitle: "Financial Analyst di BCG",
+    profileImg: "/videocard7.png",
+    rating: 4.7,
+    price: "Rp 290K",
     imgSrc: "/videocard7.png",
   },
   {
-    title: "Wealth Management",
-    description: "Strategi pengelolaan kekayaan untuk masa depan.",
-    instructorName: "David Kim",
-    instructorTitle: "Wealth Manager di Bank Mandiri",
-    profileImg: "/videocard6.png",
-    rating: 4.9,
-    price: "Rp 400K",
+    title: "Tax Management Essentials",
+    description: "Panduan untuk memahami dan mengelola pajak dengan lebih baik.",
+    instructorName: "Mark Spencer",
+    instructorTitle: "Tax Consultant di EY",
+    profileImg: "/videocard8.png",
+    rating: 4.6,
+    price: "Rp 270K",
     imgSrc: "/videocard8.png",
   },
   {
-    title: "Wealth Management",
-    description: "Strategi pengelolaan kekayaan untuk masa depan.",
-    instructorName: "David Kim",
-    instructorTitle: "Wealth Manager di Bank Mandiri",
-    profileImg: "/videocard6.png",
-    rating: 4.9,
-    price: "Rp 400K",
+    title: "Investment Banking Overview",
+    description: "Temukan dunia perbankan investasi dan perannya dalam bisnis.",
+    instructorName: "Chris Evans",
+    instructorTitle: "Investment Banker di JP Morgan",
+    profileImg: "/videocard9.png",
+    rating: 4.8,
+    price: "Rp 330K",
     imgSrc: "/videocard9.png",
-  },
-  // Tambahkan lebih banyak data video jika diperlukan
+  }
 ];
 
-const VideoGrid = () => {
+const VideoGrid = ({ onAddToCart }) => {
   return (
     <section className="py-16 px-4 md:px-10 bg-gray-100">
-      {/* Judul dan Deskripsi */}
       <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
         Koleksi Video Pembelajaran Unggulan
       </h2>
@@ -121,14 +119,8 @@ const VideoGrid = () => {
         {videoData.map((video, index) => (
           <VideoCard
             key={index}
-            title={video.title}
-            description={video.description}
-            instructorName={video.instructorName}
-            instructorTitle={video.instructorTitle}
-            profileImg={video.profileImg}
-            rating={video.rating}
-            price={video.price}
-            imgSrc={video.imgSrc}
+            video={video}
+            onAddToCart={onAddToCart}
           />
         ))}
       </div>

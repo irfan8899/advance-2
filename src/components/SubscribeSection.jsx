@@ -18,7 +18,7 @@ const SubscribeSection = () => {
         <p className="text-md font-medium text-gray-300 mb-2">NEWSLETTER</p>
         <h3 className="text-3xl font-bold text-white mb-4">Mau Belajar Lebih Banyak?</h3>
         <p className="text-lg text-gray-200 mb-6">
-          Daftarkan dirimu untuk mendapatkan informasi terbaru dan penawaran spesial dari program-program terbaik hariesok.id
+          Daftarkan dirimu untuk mendapatkan informasi terbaru dan penawaran spesial dari program-program terbaik VideoKita.id
         </p>
         
         {/* Form Input dan Tombol */}
