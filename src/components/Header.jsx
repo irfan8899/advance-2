@@ -1,157 +1,133 @@
-// src/components/Header.jsx
 import React, { useState, useEffect } from "react";
-import { FaBars, FaShoppingCart, FaUserCircle, FaSearch, FaBell, FaEnvelope, FaKey, FaUserPlus } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { FaShoppingCart, FaUserCircle, FaSearch, FaEnvelope, FaBell, FaKey, FaUserPlus } from "react-icons/fa";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Header = ({ cartItems }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userName, setUserName] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    setIsLoggedIn(!!user);
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (currentUser && currentUser.isLoggedIn) {
+      setIsLoggedIn(true);
+      setUserName(currentUser.name || "User");
+    } else {
+      setIsLoggedIn(false);
+    }
   }, []);
 
-  const toggleProfileMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("currentUser");
     setIsLoggedIn(false);
-    setIsMenuOpen(false);
-    setIsMobileMenuOpen(false);
-    navigate("/");
+    navigate("/login");
   };
 
-  const goToCart = () => {
-    setIsMobileMenuOpen(false);
-    navigate("/cart");
-  };
+  const cartCount = cartItems.length;
 
+  // Jika berada di halaman admin, tampilkan navbar khusus
+  if (location.pathname === "/admin") {
+    return (
+      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 text-white shadow-md py-3">
+        <div className="flex justify-between items-center px-4 md:px-8">
+          <div onClick={() => navigate("/admin")} className="cursor-pointer">
+            <span className="text-xl font-bold">Admin Panel</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate("/")}
+              className="text-sm bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+            >
+              Halaman Utama
+            </button>
+            <button
+              onClick={handleLogout}
+              className="text-sm bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
+  // Navbar default untuk halaman selain admin
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white text-gray-800 shadow-md py-3">
-      <div className="flex justify-between items-center px-4 md:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md py-4">
+      <div className="flex items-center justify-between px-6 md:px-12">
         {/* Logo */}
-        <div onClick={() => navigate("/")} className="cursor-pointer">
-          <span className="text-xl font-bold">
+        <div
+          onClick={() => navigate("/")}
+          className="text-2xl font-extrabold text-gray-800 cursor-pointer flex items-center space-x-2"
+        >
+          <span>
             Video<span className="text-green-500">Kita</span>
           </span>
         </div>
 
-        {/* Input Pencarian */}
-        <div className="hidden md:flex flex-grow mx-6">
-          <div className="relative w-full max-w-md">
+        {/* Search Bar */}
+        <div className="flex-1 mx-8">
+          <div className="relative">
             <input
               type="text"
               placeholder="Cari video di VideoKita"
-              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full outline-none bg-gray-100 text-gray-600 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-green-400 transition duration-200"
+              className="w-full bg-gray-100 text-gray-700 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
         </div>
 
-        {/* Ikon Notifikasi, Pesan, Keranjang, dan Profil */}
-        <nav className="flex items-center space-x-4">
-          <button className="text-xl hover:text-gray-700 transition duration-200">
+        {/* Right-side Icons */}
+        <div className="flex items-center space-x-6 text-gray-800">
+          <button className="relative text-xl hover:text-gray-700 transition duration-200">
             <FaEnvelope />
           </button>
-          <button className="text-xl hover:text-gray-700 transition duration-200">
+          <button className="relative text-xl hover:text-gray-700 transition duration-200">
             <FaBell />
           </button>
-          <button onClick={goToCart} className="relative text-xl hover:text-gray-700 transition duration-200">
+          <button
+            onClick={() => navigate("/cart")}
+            className="relative text-xl hover:text-gray-700 transition duration-200"
+          >
             <FaShoppingCart />
-            {cartItems.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1">
-                {cartItems.length}
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full px-2">
+                {cartCount}
               </span>
             )}
           </button>
-
-          {/* Menu Hamburger untuk Mobile */}
-          <button className="text-xl md:hidden hover:text-gray-700" onClick={toggleMobileMenu}>
-            <FaBars />
-          </button>
-
-          {/* Profil - Hanya di Desktop */}
           {isLoggedIn ? (
-            <div className="hidden md:flex relative">
-              <button onClick={toggleProfileMenu} className="text-xl hover:text-gray-700 transition duration-200">
+            <div className="relative group">
+              <button className="flex items-center text-xl hover:text-gray-700 transition duration-300">
                 <FaUserCircle />
               </button>
-              {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 border border-gray-200 rounded-lg shadow-lg">
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition duration-200"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profil
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition duration-200"
-                  >
-                    Logout
-                  </button>
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-1 transform transition-all duration-300">
+                <div className="px-4 py-2 text-sm text-gray-700">
+                  Halo, <strong>{userName}</strong>
                 </div>
-              )}
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
-          ) : (
-            <>
-              {/* Tombol Masuk dengan Ikon Kunci */}
-              <Link to="/login" className="hidden md:flex items-center space-x-2 text-gray-700 hover:text-gray-800 transition duration-200">
-                <FaKey />
-                <span class>Masuk</span>
-              </Link>
-
-              {/* Tombol Daftar dengan Ikon Tambah Akun */}
-              <Link to="/register" className="hidden md:flex items-center space-x-2 text-gray-700 hover:text-gray-800 transition duration-200">
-                <FaUserPlus />
-                <span>Daftar</span>
-              </Link>
-            </>
-          )}
-        </nav>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex flex-col items-center justify-center text-lg space-y-6 text-white transition-all duration-300">
-          <button onClick={toggleMobileMenu} className="absolute top-4 right-4 text-3xl focus:outline-none">
-            ✕
-          </button>
-          {isLoggedIn ? (
-            <>
-              <Link
-                to="/profile"
-                className="hover:bg-gray-700 px-6 py-3 rounded-md transition duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Profil
-              </Link>
-              <button
-                onClick={handleLogout}
-                className="hover:bg-gray-700 px-6 py-3 rounded-md transition duration-200"
-              >
-                Logout
-              </button>
-            </>
           ) : (
             <>
               <Link
                 to="/login"
-                className="flex items-center space-x-2 hover:bg-gray-700 px-6 py-3 rounded-md transition duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-green-500 transition duration-300"
               >
                 <FaKey />
                 <span>Masuk</span>
               </Link>
               <Link
                 to="/register"
-                className="flex items-center space-x-2 hover:bg-gray-700 px-6 py-3 rounded-md transition duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center space-x-2 text-gray-700 hover:text-green-500 transition duration-300"
               >
                 <FaUserPlus />
                 <span>Daftar</span>
@@ -159,7 +135,7 @@ const Header = ({ cartItems }) => {
             </>
           )}
         </div>
-      )}
+      </div>
     </header>
   );
 };

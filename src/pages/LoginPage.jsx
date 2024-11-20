@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
@@ -12,68 +11,94 @@ const LoginPage = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    const registeredUser = JSON.parse(localStorage.getItem("user"));
-    if (registeredUser && registeredUser.email === email && registeredUser.password === password) {
-      localStorage.setItem("isLoggedIn", "true");
-      navigate("/");
-    } else {
-      setErrorMessage("Email atau password salah");
+    // Ambil data admin dari localStorage
+    const adminAccount = JSON.parse(localStorage.getItem("admin"));
+    const userAccount = JSON.parse(localStorage.getItem("user"));
+
+    // Login sebagai admin
+    if (adminAccount && email === adminAccount.email && password === adminAccount.password) {
+      alert("Login berhasil sebagai Admin!");
+      localStorage.setItem("currentUser", JSON.stringify({ ...adminAccount, isLoggedIn: true }));
+      navigate("/admin");
+      return;
     }
+
+    // Login sebagai user biasa
+    if (userAccount && email === userAccount.email && password === userAccount.password) {
+      alert("Login berhasil sebagai User!");
+      localStorage.setItem("currentUser", JSON.stringify({ ...userAccount, isLoggedIn: true }));
+      navigate("/");
+      return;
+    }
+
+    // Jika gagal
+    setErrorMessage("Email atau password salah!");
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-200 via-blue-100 to-gray-100 pt-20 md:pt-32">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md text-center">
-        <FaUserCircle className="text-6xl text-blue-500 mx-auto mb-4" />
-        <h2 className="text-3xl font-bold mb-2 text-gray-800">Selamat Datang Kembali!</h2>
-        <p className="text-gray-600 mb-6">Masuk untuk melanjutkan pembelajaran</p>
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          {errorMessage && (
-            <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
-          )}
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="E-Mail"
-            className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
-            required
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Kata Sandi"
-            className="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
-            required
-          />
+    <div className="flex justify-center items-center min-h-screen bg-blue-100">
+      <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <FaUserCircle className="text-blue-500 text-6xl mx-auto mb-2" />
+          <h1 className="text-2xl font-bold text-gray-800">Selamat Datang Kembali!</h1>
+          <p className="text-sm text-gray-500">Masuk untuk melanjutkan pembelajaran</p>
+        </div>
+        {/* Error Message */}
+        {errorMessage && (
+          <p className="text-red-500 text-sm text-center mb-4">{errorMessage}</p>
+        )}
+        {/* Form */}
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="E-Mail"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Kata Sandi"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
           <button
             type="submit"
-            className="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition duration-200"
+            className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200"
           >
             Masuk
           </button>
         </form>
-
-        <div className="flex items-center justify-center space-x-2 my-4 text-sm text-gray-600">
-          <span className="border-b w-1/5"></span>
-          <span>atau</span>
-          <span className="border-b w-1/5"></span>
+        {/* Divider */}
+        <div className="flex items-center my-4">
+          <div className="border-t border-gray-300 flex-grow"></div>
+          <span className="px-4 text-gray-500 text-sm">atau</span>
+          <div className="border-t border-gray-300 flex-grow"></div>
         </div>
-
-        <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold flex items-center justify-center space-x-2 transition duration-200">
+        {/* Google Login */}
+        <button className="w-full flex items-center justify-center bg-red-500 text-white py-2 rounded-md font-semibold hover:bg-red-600 transition duration-200">
           <img
-            src="https://img.icons8.com/color/24/000000/google-logo.png"
-            alt="Google logo"
-            className="w-5 h-5"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+            alt="Google"
+            className="w-5 h-5 mr-2"
           />
-          <span>Masuk dengan Google</span>
+          Masuk dengan Google
         </button>
-
-        <p className="mt-6 text-sm text-gray-500">
+        {/* Register Link */}
+        <p className="text-sm text-center text-gray-500 mt-4">
           Belum punya akun?{" "}
-          <a href="/register" className="text-blue-600 font-semibold hover:underline">
+          <a
+            href="/register"
+            className="text-blue-500 font-semibold hover:underline"
+          >
             Daftar sekarang
           </a>
         </p>

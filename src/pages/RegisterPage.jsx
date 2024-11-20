@@ -1,4 +1,3 @@
-// src/pages/RegisterPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaUserPlus } from "react-icons/fa";
@@ -16,10 +15,13 @@ const RegisterPage = () => {
     if (name && email && password) {
       // Menyimpan user ke localStorage
       const user = { name, email, password };
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user)); // Simpan data user
 
       alert("Pendaftaran berhasil!");
-      navigate("/login");
+
+      // Redirect ke halaman utama atau halaman lain setelah register
+      navigate("/");
+      window.location.reload(); // Force reload untuk memperbarui status login di komponen lain
     } else {
       setErrorMessage("Semua bidang harus diisi!");
     }

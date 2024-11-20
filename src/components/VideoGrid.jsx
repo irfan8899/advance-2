@@ -1,101 +1,33 @@
-// src/components/VideoGrid.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import VideoCard from "./VideoCard";
-
-const videoData = [
-  {
-    title: "Big 4 Auditor Financial Analyst",
-    description: "Mulai transformasi dengan instruktur profesional, harga yang terjangkau, dan…",
-    instructorName: "Jenna Ortega",
-    instructorTitle: "Senior Accountant di Gojek",
-    profileImg: "/videocard1.png",
-    rating: 4.5,
-    price: "Rp 300K",
-    imgSrc: "/videocard1.png",
-  },
-  {
-    title: "Financial Planning Basics",
-    description: "Pelajari dasar-dasar perencanaan keuangan dengan ahli berpengalaman.",
-    instructorName: "Alex Johnson",
-    instructorTitle: "Financial Advisor di HSBC",
-    profileImg: "/videocard2.png",
-    rating: 4.7,
-    price: "Rp 280K",
-    imgSrc: "/videocard2.png",
-  },
-  {
-    title: "Investing 101",
-    description: "Panduan dasar investasi untuk pemula dan para senior yang sudah berpengalaman.",
-    instructorName: "Michael Lee",
-    instructorTitle: "Investment Banker di BCA",
-    profileImg: "/videocard3.png",
-    rating: 4.3,
-    price: "Rp 320K",
-    imgSrc: "/videocard3.png",
-  },
-  {
-    title: "Advanced Accounting",
-    description: "Pelajari teknik akuntansi lanjutan untuk profesional.",
-    instructorName: "Rachel Adams",
-    instructorTitle: "Senior Accountant di PWC",
-    profileImg: "/videocard4.png",
-    rating: 4.8,
-    price: "Rp 350K",
-    imgSrc: "/videocard4.png",
-  },
-  {
-    title: "Personal Budgeting",
-    description: "Kelola anggaran pribadi Anda dengan cara yang efektif.",
-    instructorName: "Sophia Williams",
-    instructorTitle: "Budgeting Expert",
-    profileImg: "/videocard5.png",
-    rating: 4.6,
-    price: "Rp 250K",
-    imgSrc: "/videocard5.png",
-  },
-  {
-    title: "Wealth Management",
-    description: "Strategi pengelolaan kekayaan untuk masa depan.",
-    instructorName: "David Kim",
-    instructorTitle: "Wealth Manager di Bank Mandiri",
-    profileImg: "/videocard6.png",
-    rating: 4.9,
-    price: "Rp 400K",
-    imgSrc: "/videocard6.png",
-  },
-  {
-    title: "Corporate Finance Fundamentals",
-    description: "Pelajari dasar-dasar keuangan korporasi untuk meningkatkan pemahaman bisnis Anda.",
-    instructorName: "Jane Doe",
-    instructorTitle: "Financial Analyst di BCG",
-    profileImg: "/videocard7.png",
-    rating: 4.7,
-    price: "Rp 290K",
-    imgSrc: "/videocard7.png",
-  },
-  {
-    title: "Tax Management Essentials",
-    description: "Panduan untuk memahami dan mengelola pajak dengan lebih baik.",
-    instructorName: "Mark Spencer",
-    instructorTitle: "Tax Consultant di EY",
-    profileImg: "/videocard8.png",
-    rating: 4.6,
-    price: "Rp 270K",
-    imgSrc: "/videocard8.png",
-  },
-  {
-    title: "Investment Banking Overview",
-    description: "Temukan dunia perbankan investasi dan perannya dalam bisnis.",
-    instructorName: "Chris Evans",
-    instructorTitle: "Investment Banker di JP Morgan",
-    profileImg: "/videocard9.png",
-    rating: 4.8,
-    price: "Rp 330K",
-    imgSrc: "/videocard9.png",
-  }
-];
+import { getProducts } from "../services/api/productsApi";
 
 const VideoGrid = ({ onAddToCart }) => {
+  const [videos, setVideos] = useState([]);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const data = await getProducts();
+        const mappedData = data.map((item) => ({
+          title: item.title,
+          description: item.description,
+          instructorName: item.mentor,
+          instructorTitle: item.roleMentor,
+          profileImg: item.photoUrl,
+          imgSrc: item.photoUrl,
+          price: `Rp ${item.price}K`,
+          rating: item.rating || 4.5,
+        }));
+        setVideos(mappedData);
+      } catch (error) {
+        console.error("Error fetching videos:", error);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
   return (
     <section className="py-16 px-4 md:px-10 bg-gray-100">
       <h2 className="text-2xl md:text-3xl font-bold mb-4 text-center">
@@ -104,24 +36,9 @@ const VideoGrid = ({ onAddToCart }) => {
       <p className="text-sm md:text-md text-gray-600 mb-8 text-center">
         Jelajahi Dunia Pengetahuan Melalui Pilihan Kami!
       </p>
-      
-      {/* Kategori */}
-      <div className="flex justify-center space-x-4 md:space-x-8 mb-8 text-sm font-semibold">
-        <p className="text-red-500 border-b-2 border-red-500 pb-2 cursor-pointer">Semua Kelas</p>
-        <p className="text-gray-600 cursor-pointer hover:text-black">Pemasaran</p>
-        <p className="text-gray-600 cursor-pointer hover:text-black">Design</p>
-        <p className="text-gray-600 cursor-pointer hover:text-black">Pengembangan Diri</p>
-        <p className="text-gray-600 cursor-pointer hover:text-black">Bisnis</p>
-      </div>
-
-      {/* Grid Video */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-        {videoData.map((video, index) => (
-          <VideoCard
-            key={index}
-            video={video}
-            onAddToCart={onAddToCart}
-          />
+        {videos.map((video, index) => (
+          <VideoCard key={index} video={video} onAddToCart={onAddToCart} />
         ))}
       </div>
     </section>

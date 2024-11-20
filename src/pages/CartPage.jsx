@@ -1,26 +1,13 @@
-// src/pages/CartPage.jsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-const CartPage = ({ onRemoveFromCart }) => {
-  const [cartItems, setCartItems] = useState([]);
-
-  useEffect(() => {
-    const savedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-    setCartItems(savedCartItems);
-  }, []);
-
-  const removeItem = (index) => {
-    const updatedCart = cartItems.filter((_, i) => i !== index);
-    setCartItems(updatedCart);
-    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
-    onRemoveFromCart(updatedCart);
+const CartPage = ({ cartItems, onRemoveFromCart }) => {
+  const handleRemoveItem = (index) => {
+    onRemoveFromCart(index); // Panggil fungsi untuk menghapus item
   };
 
   return (
     <div className="min-h-screen pt-24 px-8 bg-gray-50">
-      {" "}
-      {/* Tambahkan pt-24 untuk jarak dari header */}
-      <h1 className="text-4xl font-bold mb-8 text-center">Keranjang Belanja saya</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center">Keranjang Belanja Saya</h1>
       {cartItems.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cartItems.map((item, index) => (
@@ -37,7 +24,7 @@ const CartPage = ({ onRemoveFromCart }) => {
               <p className="text-gray-600">{item.description}</p>
               <p className="text-green-600 font-bold mt-2">{item.price}</p>
               <button
-                onClick={() => removeItem(index)}
+                onClick={() => handleRemoveItem(index)}
                 className="mt-4 w-full bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200"
               >
                 Hapus dari Keranjang
