@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FaShoppingCart, FaUserCircle, FaSearch, FaEnvelope, FaBell, FaKey, FaUserPlus } from "react-icons/fa";
+import { FaShoppingCart, FaUserCircle, FaSearch, FaEnvelope, FaBell, FaKey, FaUserPlus, FaBars } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Header = ({ cartItems }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -56,7 +57,7 @@ const Header = ({ cartItems }) => {
   // Navbar default untuk halaman selain admin
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md py-4">
-      <div className="flex items-center justify-between px-6 md:px-12">
+      <div className="flex items-center justify-between px-4 md:px-8">
         {/* Logo */}
         <div
           onClick={() => navigate("/")}
@@ -67,9 +68,17 @@ const Header = ({ cartItems }) => {
           </span>
         </div>
 
+        {/* Hamburger Menu */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="text-gray-800 text-2xl md:hidden focus:outline-none"
+        >
+          <FaBars />
+        </button>
+
         {/* Search Bar */}
-        <div className="flex-1 mx-8">
-          <div className="relative">
+        <div className="hidden md:flex flex-1 mx-8">
+          <div className="relative w-full">
             <input
               type="text"
               placeholder="Cari video di VideoKita"
@@ -80,7 +89,7 @@ const Header = ({ cartItems }) => {
         </div>
 
         {/* Right-side Icons */}
-        <div className="flex items-center space-x-6 text-gray-800">
+        <div className="hidden md:flex items-center space-x-6 text-gray-800">
           <button className="relative text-xl hover:text-gray-700 transition duration-200">
             <FaEnvelope />
           </button>
@@ -136,6 +145,30 @@ const Header = ({ cartItems }) => {
           )}
         </div>
       </div>
+
+      {/* Dropdown Menu for Mobile */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-gray-100 text-gray-800 shadow-md">
+          <div className="flex flex-col space-y-4 py-4 px-6">
+            {isLoggedIn ? (
+              <>
+                <div>Halo, <strong>{userName}</strong></div>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-sm text-gray-800 hover:text-green-500">Masuk</Link>
+                <Link to="/register" className="text-sm text-gray-800 hover:text-green-500">Daftar</Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };
