@@ -12,19 +12,30 @@ const RegisterPage = () => {
   const handleRegister = (e) => {
     e.preventDefault();
 
-    if (name && email && password) {
-      // Menyimpan user ke localStorage
-      const user = { name, email, password };
-      localStorage.setItem("user", JSON.stringify(user)); // Simpan data user
-
-      alert("Pendaftaran berhasil!");
-
-      // Redirect ke halaman utama atau halaman lain setelah register
-      navigate("/");
-      window.location.reload(); // Force reload untuk memperbarui status login di komponen lain
-    } else {
+    // Validasi input
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex untuk validasi email
+    if (!name || !email || !password) {
       setErrorMessage("Semua bidang harus diisi!");
+      return;
     }
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Format email tidak valid!");
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMessage("Kata sandi minimal 6 karakter!");
+      return;
+    }
+
+    // Menyimpan user ke localStorage
+    const user = { name, email, password, isLoggedIn: true };
+    localStorage.setItem("currentUser", JSON.stringify(user)); // Simpan data user
+
+    alert("Pendaftaran berhasil!");
+
+    // Redirect ke halaman utama atau halaman lain setelah register
+    navigate("/");
+    window.location.reload(); // Perbarui tampilan
   };
 
   return (

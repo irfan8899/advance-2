@@ -1,22 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { FaShoppingCart, FaUserCircle, FaSearch, FaEnvelope, FaBell, FaKey, FaUserPlus } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaUserCircle,
+  FaSearch,
+  FaEnvelope,
+  FaBell,
+  FaKey,
+  FaUserPlus,
+} from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const Header = ({ cartItems }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [role, setRole] = useState(""); // Role admin/user
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Menu responsif
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Cek status login saat komponen dimuat
   useEffect(() => {
     const currentUser = JSON.parse(localStorage.getItem("currentUser"));
     if (currentUser && currentUser.isLoggedIn) {
       setIsLoggedIn(true);
       setUserName(currentUser.name || "User");
+      setRole(currentUser.role || "user"); // Ambil role dari localStorage
     } else {
       setIsLoggedIn(false);
     }
-  }, []);
+  }, [location.pathname]); // Perbarui saat lokasi berubah
 
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
@@ -24,36 +36,12 @@ const Header = ({ cartItems }) => {
     navigate("/login");
   };
 
-  const cartCount = cartItems.length;
+  const cartCount = cartItems?.length || 0;
 
-  // Jika berada di halaman admin, tampilkan navbar khusus
-  if (location.pathname === "/admin") {
-    return (
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gray-800 text-white shadow-md py-3">
-        <div className="flex justify-between items-center px-4 md:px-8">
-          <div onClick={() => navigate("/admin")} className="cursor-pointer">
-            <span className="text-xl font-bold">Admin Panel</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigate("/")}
-              className="text-sm bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-            >
-              Halaman Utama
-            </button>
-            <button
-              onClick={handleLogout}
-              className="text-sm bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </header>
-    );
-  }
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
-  // Navbar default untuk halaman selain admin
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md py-4">
       <div className="flex items-center justify-between px-6 md:px-12">
@@ -68,7 +56,7 @@ const Header = ({ cartItems }) => {
         </div>
 
         {/* Search Bar */}
-        <div className="flex-1 mx-8">
+        <div className="hidden md:flex flex-1 mx-8">
           <div className="relative">
             <input
               type="text"
@@ -80,7 +68,7 @@ const Header = ({ cartItems }) => {
         </div>
 
         {/* Right-side Icons */}
-        <div className="flex items-center space-x-6 text-gray-800">
+        <div className="hidden md:flex items-center space-x-6 text-gray-800">
           <button className="relative text-xl hover:text-gray-700 transition duration-200">
             <FaEnvelope />
           </button>
@@ -98,24 +86,35 @@ const Header = ({ cartItems }) => {
               </span>
             )}
           </button>
+
           {isLoggedIn ? (
-            <div className="relative group">
-              <button className="flex items-center text-xl hover:text-gray-700 transition duration-300">
-                <FaUserCircle />
-              </button>
-              {/* Dropdown Menu */}
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-1 transform transition-all duration-300">
-                <div className="px-4 py-2 text-sm text-gray-700">
-                  Halo, <strong>{userName}</strong>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200"
+            <>
+              {role === "admin" && (
+                <Link
+                  to="/admin/dashboard"
+                  className="text-gray-700 hover:text-green-500 transition duration-300"
                 >
-                  Logout
+                  Admin Panel
+                </Link>
+              )}
+              <div className="relative group">
+                <button className="flex items-center text-xl hover:text-gray-700 transition duration-300">
+                  <FaUserCircle />
                 </button>
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 group-hover:translate-y-1 transform transition-all duration-300">
+                  <div className="px-4 py-2 text-sm text-gray-700">
+                    Halo,{" "}
+                    <strong>{role === "admin" ? "Admin" : userName}</strong>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition duration-200"
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
-            </div>
+            </>
           ) : (
             <>
               <Link
@@ -135,7 +134,57 @@ const Header = ({ cartItems }) => {
             </>
           )}
         </div>
+
+        {/* Hamburger Menu untuk Mobile */}
+        <div className="md:hidden">
+          <button onClick={toggleMenu} className="text-2xl text-gray-700">
+            ☰
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="absolute top-16 left-0 w-full bg-white shadow-lg md:hidden">
+          <Link
+            to="/"
+            className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+          >
+            Home
+          </Link>
+          {isLoggedIn && role === "admin" && (
+            <Link
+              to="/admin/dashboard"
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            >
+              Admin Panel
+            </Link>
+          )}
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                Register
+              </Link>
+            </>
+          )}
+        </div>
+      )}
     </header>
   );
 };

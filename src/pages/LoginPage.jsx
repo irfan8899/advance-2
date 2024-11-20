@@ -6,33 +6,36 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    // Ambil data admin dari localStorage
+    // Ambil data admin dan user dari localStorage
     const adminAccount = JSON.parse(localStorage.getItem("admin"));
     const userAccount = JSON.parse(localStorage.getItem("user"));
 
-    // Login sebagai admin
+    // Validasi Login
     if (adminAccount && email === adminAccount.email && password === adminAccount.password) {
-      alert("Login berhasil sebagai Admin!");
       localStorage.setItem("currentUser", JSON.stringify({ ...adminAccount, isLoggedIn: true }));
+      alert("Login berhasil sebagai Admin!");
+      setIsLoading(false);
       navigate("/admin");
       return;
     }
 
-    // Login sebagai user biasa
     if (userAccount && email === userAccount.email && password === userAccount.password) {
-      alert("Login berhasil sebagai User!");
       localStorage.setItem("currentUser", JSON.stringify({ ...userAccount, isLoggedIn: true }));
+      alert("Login berhasil sebagai User!");
+      setIsLoading(false);
       navigate("/");
       return;
     }
 
-    // Jika gagal
     setErrorMessage("Email atau password salah!");
+    setIsLoading(false);
   };
 
   return (
@@ -72,9 +75,12 @@ const LoginPage = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md font-semibold hover:bg-blue-600 transition duration-200"
+            disabled={isLoading}
+            className={`w-full py-2 rounded-md font-semibold transition duration-200 ${
+              isLoading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"
+            }`}
           >
-            Masuk
+            {isLoading ? "Memproses..." : "Masuk"}
           </button>
         </form>
         {/* Divider */}
