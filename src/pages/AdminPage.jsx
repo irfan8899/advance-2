@@ -18,7 +18,7 @@ const AdminPage = () => {
 
   const apiURL = "https://6738ca244eb22e24fca8ffe8.mockapi.io/products";
 
-  // Fetch products from MockAPI
+  // Ambil daftar produk dari MockAPI
   const fetchProducts = async () => {
     try {
       const response = await axios.get(apiURL);
@@ -27,18 +27,18 @@ const AdminPage = () => {
       console.error("Error fetching products:", error.message);
       Swal.fire({
         icon: "error",
-        title: "Error Fetching Products",
+        title: "Error Mengambil Data Produk",
         text: error.message,
       });
     }
   };
 
-  // Handle form submission (Add/Update)
+  // Tangani pengiriman formulir (Tambah/Edit produk)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (isEditing) {
-        // Update existing product
+        // Perbarui produk yang ada
         const response = await axios.put(`${apiURL}/${editId}`, formData);
         Swal.fire({
           icon: "success",
@@ -46,9 +46,9 @@ const AdminPage = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        console.log("Updated Product:", response.data);
+        console.log("Produk diperbarui:", response.data);
       } else {
-        // Add new product
+        // Tambah produk baru
         const response = await axios.post(apiURL, formData);
         Swal.fire({
           icon: "success",
@@ -56,10 +56,10 @@ const AdminPage = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        console.log("Added Product:", response.data);
+        console.log("Produk ditambahkan:", response.data);
       }
 
-      // Reset form
+      // Reset formulir
       setFormData({
         title: "",
         subtitle: "",
@@ -71,7 +71,7 @@ const AdminPage = () => {
       });
       setIsEditing(false);
       setEditId(null);
-      fetchProducts(); // Refresh product list
+      fetchProducts(); // Segarkan daftar produk
     } catch (error) {
       console.error("Error submitting form:", error.message);
       Swal.fire({
@@ -82,7 +82,7 @@ const AdminPage = () => {
     }
   };
 
-  // Handle delete product
+  // Tangani penghapusan produk
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Apakah Anda yakin?",
@@ -104,8 +104,8 @@ const AdminPage = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        console.log("Deleted Product:", response.data);
-        fetchProducts(); // Refresh product list
+        console.log("Produk dihapus:", response.data);
+        fetchProducts(); // Segarkan daftar produk
       } catch (error) {
         console.error("Error deleting product:", error.message);
         Swal.fire({
@@ -117,7 +117,7 @@ const AdminPage = () => {
     }
   };
 
-  // Handle edit product
+  // Tangani pengeditan produk
   const handleEdit = (product) => {
     setFormData(product);
     setIsEditing(true);
@@ -130,7 +130,7 @@ const AdminPage = () => {
     });
   };
 
-  // Fetch products on component mount
+  // Ambil produk saat komponen pertama kali dimuat
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -138,7 +138,7 @@ const AdminPage = () => {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-extrabold text-gray-800 mb-6 text-center">
-        Admin Dashboard
+        Dashboard Admin
       </h1>
       <div className="bg-white shadow-md rounded-lg p-6">
         <form
@@ -209,7 +209,7 @@ const AdminPage = () => {
             type="submit"
             className={`bg-${isEditing ? "yellow" : "blue"}-500 text-white font-semibold py-3 px-6 rounded-lg hover:shadow-md hover:bg-${isEditing ? "yellow" : "blue"}-600 transition`}
           >
-            {isEditing ? "Update Product" : "Add Product"}
+            {isEditing ? "Update Produk" : "Tambah Produk"}
           </button>
         </form>
       </div>
@@ -227,10 +227,7 @@ const AdminPage = () => {
         </thead>
         <tbody>
           {products.map((product, index) => (
-            <tr
-              key={product.id}
-              className="hover:bg-gray-100 transition-colors"
-            >
+            <tr key={product.id} className="hover:bg-gray-100 transition-colors">
               <td className="p-4">{index + 1}</td>
               <td className="p-4">{product.title}</td>
               <td className="p-4">{product.subtitle}</td>
@@ -247,7 +244,7 @@ const AdminPage = () => {
                   onClick={() => handleDelete(product.id)}
                   className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition"
                 >
-                  Delete
+                  Hapus
                 </button>
               </td>
             </tr>
